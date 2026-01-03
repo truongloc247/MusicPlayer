@@ -1,4 +1,26 @@
 {
+  "users": [
+    {
+      "email": "loc24@gmail.com",
+      "password": "$2a$10$fhmRMYCC8iMm/3oxBTzqvOGoGaTq05ArAS2TxkjOg0FrdrziPEAWG",
+      "id": 1,
+      "name": "Loc",
+      "age": 21,
+      "gender": true,
+      "phoneNumber": "0123456789",
+      "address": "Huế"
+    },
+    {
+      "email": "loch24@gmail.com",
+      "password": "$2a$10$jJ7E4dGmBkZ45IZg4AINXOAjoEinmDRNuFsC5zHfMjQ8nVR38uD0S",
+      "id": 2,
+      "name": "Loch",
+      "age": 21,
+      "gender": false,
+      "phoneNumber": "0123456789",
+      "address": "Huế"
+    }
+  ],
   "songs": [
     {
       "id": "1",
