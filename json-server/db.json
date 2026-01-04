@@ -2,7 +2,7 @@
   "users": [
     {
       "email": "loc24@gmail.com",
-      "password": "$2a$10$fhmRMYCC8iMm/3oxBTzqvOGoGaTq05ArAS2TxkjOg0FrdrziPEAWG",
+      "password": "$2a$10$PDAoYhG8lk7Gy9eq0Xy9vuHXROr0vIMbKMY8YCgm1ei8nJLBZBkVy",
       "id": 1,
       "name": "Loc",
       "age": 21,
@@ -11,89 +11,89 @@
       "address": "Huế"
     },
     {
-      "email": "loch24@gmail.com",
-      "password": "$2a$10$jJ7E4dGmBkZ45IZg4AINXOAjoEinmDRNuFsC5zHfMjQ8nVR38uD0S",
+      "email": "huyen21@gmail.com",
+      "password": "$2a$10$eHhzofpLGMN9HQKVsfwsO.CI0SXOev//ZdUHWUMDAKFTrYgM19TBi",
       "id": 2,
-      "name": "Loch",
+      "name": "Huyền",
       "age": 21,
       "gender": false,
-      "phoneNumber": "0123456789",
+      "phoneNumber": "0987654321",
       "address": "Huế"
     }
   ],
   "songs": [
     {
-      "id": "1",
+      "id": 1,
       "name": "Cuối cùng thì",
       "source": "https://dn720305.ca.archive.org/0/items/cuoi-cung-thi-live-jack-j-97-v-pop-essentials-v.-a-playlist-nhac-cua-tui/Cu%E1%BB%91i%20C%C3%B9ng%20Th%C3%AC%20%28Live%29%20-%20Jack%20-%20J97%20-%20V-POP%20Essentials%20-%20V.A%20-%20Playlist%20NhacCuaTui.mp3",
       "singer": "Jack - J97",
-      "image": "https://i.pinimg.com/736x/b1/f8/2a/b1f82a5ec6859db562babf2749a43ec3.jpg"
+      "image": "https://thethaovanhoa.mediacdn.vn/372676912336973824/2022/11/22/jack2-16690769289241365104337.jpg"
     },
     {
-      "id": "2",
+      "id": 2,
       "name": "Laylalay",
       "source": "https://dn721906.ca.archive.org/0/items/lay-la-lay-jack/LayLaLay%20-%20Jack.mp3",
       "singer": "Jack - J97",
-      "image": "https://i.pinimg.com/1200x/2e/27/91/2e27918edda437d3f57dbcb31b01bc4f.jpg"
+      "image": "https://i1.sndcdn.com/artworks-mkrSBVFmsPD28I8d-UyHo3g-t500x500.jpg"
     },
     {
-      "id": "3",
+      "id": 3,
       "name": "Forever young",
       "source": "https://dn721802.ca.archive.org/0/items/alphaville-1984-forever_young/06.%20Forever%20Young.mp3",
       "singer": "Alphaville",
       "image": "https://upload.wikimedia.org/wikipedia/en/3/3b/Alphaville_-_Forever_Young_Single.jpg"
     },
     {
-      "id": "4",
+      "id": 4,
       "name": "Chạy ngay đi",
       "source": "https://dn710000.ca.archive.org/0/items/chay-ngay-di-son-tung-m-tp-top-100-v-pop-hot-2007-2022-15-nam-nhac-cua-tui-v.-a-_202309/Ch%E1%BA%A1y%20Ngay%20%C4%90i%20-%20S%C6%A1n%20T%C3%B9ng%20M-TP%20-%20Top%20100%20V-Pop%20Hot%202007-2022%20-%2015%20N%C4%83m%20NhacCuaTui%20-%20V.A%20-%20Playlist%20NhacCuaTui.mp3",
       "singer": "Sơn Tùng MTP",
       "image": "https://upload.wikimedia.org/wikipedia/vi/8/85/Chay_ngay_di.png"
     },
     {
-      "id": "5",
+      "id": 5,
       "name": "Hãy trao cho anh",
       "source": "https://dn710006.ca.archive.org/0/items/hay-trao-cho-anh-son-tung-m-tp-snoop-dogg-my-nam-nhac-viet-v.-a-playlist-nhac-cua-tui/H%C3%A3y%20Trao%20Cho%20Anh%20-%20S%C6%A1n%20T%C3%B9ng%20M-TP%2C%20Snoop%20Dogg%20-%20M%E1%BB%B9%20Nam%20Nh%E1%BA%A1c%20Vi%E1%BB%87t%20-%20V.A%20-%20Playlist%20NhacCuaTui.mp3",
       "singer": "Sơn Tùng MTP",
       "image": "https://upload.wikimedia.org/wikipedia/vi/a/a5/H%C3%A3y_trao_cho_anh.jpg"
     },
     {
-      "id": "6",
+      "id": 6,
       "name": "VIBE",
       "source": "https://dn721608.ca.archive.org/0/items/taeyang-vibe-feat.-jimin-of-bts/TAEYANG%20-%20_%27VIBE%20%28feat.%20Jimin%20of%20BTS%29_%27.mp3",
       "singer": "TAEYANG - feat. Jimin",
       "image": "https://upload.wikimedia.org/wikipedia/en/e/e9/Taeyang_-_Vibe.png"
     },
     {
-      "id": "7",
+      "id": 7,
       "name": "Beautiful monster",
       "source": "https://dn721609.ca.archive.org/0/items/beautiful-monster-soobin-binz-tiec-tung-thoi-v.-a-playlist-nhac-cua-tui/Beautiful%20Monster%20-%20SOOBIN%2C%20Binz%20-%20Ti%E1%BB%87c%20T%C3%B9ng%20Th%C3%B4i%20-%20V.A%20-%20Playlist%20NhacCuaTui.mp3",
       "singer": "Soobin Hoàng Sơn - Binz",
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/SOOBIN_-_LIVE_CONCERT_ALL-ROUNDER_THE_FINAL_2025.jpg/500px-SOOBIN_-_LIVE_CONCERT_ALL-ROUNDER_THE_FINAL_2025.jpg"
     },
     {
-      "id": "8",
+      "id": 8,
       "name": "Tháng Năm (Special Performance)",
       "source": "https://dn720306.ca.archive.org/0/items/thang-nam-special-performance-soobin-hoang-son-slim-v-di-dau-cung-nghe-v.-a-playlist-nhac-cua-tui/Th%C3%A1ng%20N%C4%83m%20%28Special%20Performance%29%20-%20Soobin%20Ho%C3%A0ng%20S%C6%A1n%2C%20SlimV%20-%20%C4%90i%20%C4%90%C3%A2u%20C%C5%A9ng%20Nghe%20-%20V.A%20-%20Playlist%20NhacCuaTui.mp3",
       "singer": "Soobin Hoàng Sơn",
-      "image": "https://i.pinimg.com/736x/e2/18/36/e21836f81dc14aa3603fd9f818d8760a.jpg"
+      "image": "https://channel.mediacdn.vn/2020/12/19/photo-1-16083714223361437462818.jpg"
     },
     {
-      "id": "9",
+      "id": 9,
       "name": "Bigcityboi",
       "source": "https://dn721609.ca.archive.org/0/items/big-city-boi-binz-touliver/Big%20City%20Boi%20-%20Binz%2C%20Touliver.mp3",
       "singer": "Binz",
       "image": "https://upload.wikimedia.org/wikipedia/vi/thumb/1/1b/Binz_-_Bigcityboi.jpg/425px-Binz_-_Bigcityboi.jpg"
     },
     {
-      "id": "10",
+      "id": 10,
       "name": "Beat it",
       "source": "https://dn721505.ca.archive.org/0/items/michael-jackson-1995-history-past-present-and-future-book1-uncensored-release-2-cd-320/10.%20Beat%20It.mp3",
       "singer": "Michael Jackson",
       "image": "https://upload.wikimedia.org/wikipedia/vi/6/65/Michael_Jackson_-_Beat_It_cover.jpg"
     },
     {
-      "id": "11",
+      "id": 11,
       "name": "Brother Louis",
       "source": "https://dn721807.ca.archive.org/0/items/modern-talking-brother-louie-98/01%20-%20Brother%20Louie%20Mix%20%2798%20%28feat.%20Eric%20Singleton%29%20%28Radio%20Edit%29.mp3",
       "singer": "Modern Talking",

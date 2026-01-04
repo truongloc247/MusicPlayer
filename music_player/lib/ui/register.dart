@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:music_player/model/auth_api.dart';
 import 'package:music_player/model/token.dart';
 import 'package:music_player/model/user.dart';
+import 'package:music_player/ui/login.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -261,6 +262,7 @@ class _RegisterState extends State<Register> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Đăng ký thành công')),
                   );
+                  Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Đăng ký thất bại')),
