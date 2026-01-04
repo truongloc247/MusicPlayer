@@ -10,6 +10,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Register());
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        primaryColor: const Color(0xFF5D4DCB),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF5D4DCB),
+          secondary: Color(0xFF5D4DCB),
+          surface: Colors.white,
+          onPrimary: Colors.white,
+          onSurface: Colors.black,
+        ),
+      ),
+      home: Register(),
+    );
   }
 }
