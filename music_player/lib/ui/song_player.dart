@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:music_player/model/position_data.dart';
 import 'package:music_player/model/song.dart';
 import 'package:music_player/model/song_api.dart';
 import 'package:music_player/model/token.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SongPlayer extends StatefulWidget {
   SongPlayer({super.key, required this.token});
@@ -16,16 +19,143 @@ class _SongPlayerState extends State<SongPlayer> {
   late SongApi songApi;
   late Future<List<Song>?> songs;
 
+  late Song? playingSong;
+
+  final AudioPlayer audioPlayer = AudioPlayer();
+
+  double? _dragValue;
+
   @override
   void initState() {
     songApi = SongApi();
     songs = songApi.getAllSongs(widget.token.token);
+    playingSong = null;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: songList());
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(height: 400, child: renderPlayingSong(playingSong)),
+          Expanded(child: songList()),
+        ],
+      ),
+    );
+  }
+
+  Widget renderPlayingSong(Song? song) {
+    if (song == null) {
+      return Center(child: Text("Hãy chọn bài hát muốn phát"));
+    }
+    return Column(
+      children: [
+        Image.network(song.image, width: 200, height: 200, fit: BoxFit.cover),
+        Text(song.name),
+        Text(song.singer),
+        renderSongSlider(),
+        renderPlayingController(),
+      ],
+    );
+  }
+
+  Widget renderPlayingController() {
+    return StreamBuilder<PlayerState>(
+      stream: audioPlayer.playerStateStream,
+      builder: (context, snap) {
+        final playerState = snap.data;
+        final processingState = playerState?.processingState;
+        final playing = playerState?.playing;
+
+        if (processingState == ProcessingState.loading ||
+            processingState == ProcessingState.buffering) {
+          return const CircularProgressIndicator();
+        }
+        if (playing != true) {
+          return IconButton(
+            iconSize: 64,
+            icon: const Icon(Icons.play_circle_fill),
+            onPressed: audioPlayer.play,
+          );
+        }
+        if (processingState != ProcessingState.completed) {
+          return IconButton(
+            iconSize: 64,
+            icon: const Icon(Icons.pause_circle_filled),
+            onPressed: audioPlayer.pause,
+          );
+        }
+        return IconButton(
+          iconSize: 64,
+          icon: const Icon(Icons.replay),
+          onPressed: () {
+            audioPlayer.pause();
+            audioPlayer.seek(Duration.zero);
+            audioPlayer.play();
+          },
+        );
+      },
+    );
+  }
+
+  Stream<PositionData> get positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+        audioPlayer.positionStream,
+        audioPlayer.bufferedPositionStream,
+        audioPlayer.durationStream,
+        (position, bufferedPosition, duration) =>
+            PositionData(position, bufferedPosition, duration ?? Duration.zero),
+      );
+
+  Widget renderSongSlider() {
+    return StreamBuilder<PositionData>(
+      stream: positionDataStream,
+      builder: (context, snapshot) {
+        final positionData = snapshot.data;
+        final position = positionData?.position ?? Duration.zero;
+        final duration = positionData?.duration ?? Duration.zero;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              Slider(
+                min: 0.0,
+                max: duration.inSeconds.toDouble(),
+                value:
+                    _dragValue ??
+                    position.inSeconds.toDouble().clamp(
+                      0,
+                      duration.inSeconds.toDouble(),
+                    ),
+                onChanged: (value) {
+                  setState(() {
+                    _dragValue = value;
+                  });
+                },
+
+                onChangeEnd: (value) {
+                  audioPlayer.pause();
+                  audioPlayer.seek(Duration(seconds: value.toInt()));
+                  audioPlayer.play();
+                  setState(() {
+                    _dragValue = null;
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_formatDuration(position)),
+                  Text(_formatDuration(duration)),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget songList() {
@@ -59,9 +189,26 @@ class _SongPlayerState extends State<SongPlayer> {
     );
   }
 
+  Future<void> playSpecificSong(String url) async {
+    try {
+      await audioPlayer.stop();
+
+      await audioPlayer.setUrl(url);
+
+      audioPlayer.play();
+    } catch (e) {
+      print("Lỗi: $e");
+    }
+  }
+
   Widget renderSong(Song song) {
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        setState(() {
+          playingSong = song;
+        });
+        await playSpecificSong(song.source);
+      },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
@@ -113,4 +260,11 @@ class _SongPlayerState extends State<SongPlayer> {
       ),
     );
   }
+}
+
+String _formatDuration(Duration duration) {
+  String twoDigits(int n) => n.toString().padLeft(2, "0");
+  final minutes = twoDigits(duration.inMinutes.remainder(60));
+  final seconds = twoDigits(duration.inSeconds.remainder(60));
+  return "$minutes:$seconds";
 }
