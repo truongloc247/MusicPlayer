@@ -1,9 +1,14 @@
+import 'dart:math';
+
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/model/position_data.dart';
 import 'package:music_player/model/song.dart';
 import 'package:music_player/model/song_api.dart';
 import 'package:music_player/model/token.dart';
+import 'package:music_player/ui/user_info.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SongPlayer extends StatefulWidget {
@@ -19,48 +24,189 @@ class _SongPlayerState extends State<SongPlayer> {
   late SongApi songApi;
   late Future<List<Song>?> songs;
 
-  late Song? playingSong;
+  // Song? playingSong;
+
+  late List<Song> playingSongList;
+
+  // int? playingSongIndex;
 
   final AudioPlayer audioPlayer = AudioPlayer();
 
-  double? _dragValue;
+  bool isLoopOne = false;
 
   @override
   void initState() {
     songApi = SongApi();
     songs = songApi.getAllSongs(widget.token.token);
-    playingSong = null;
+    // playingSong = null;
     super.initState();
   }
+
+  // int _selectedIndex = 0;
+
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("iJik PLAYLIST"),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
+      ),
       body: Column(
         children: [
-          SizedBox(height: 400, child: renderPlayingSong(playingSong)),
+          SizedBox(height: 400, child: renderPlayingSong()),
           Expanded(child: songList()),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: Text("Khám phá"),
+              selected: true,
+              onTap: () {
+                // _onItemTapped(0);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text("Thông tin người dùng"),
+              // selected: _selectedIndex == 1,
+              onTap: () {
+                // _onItemTapped(1);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserInfo(token: widget.token),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget renderPlayingSong(Song? song) {
-    if (song == null) {
-      return Center(child: Text("Hãy chọn bài hát muốn phát"));
-    }
-    return Column(
-      children: [
-        Image.network(song.image, width: 200, height: 200, fit: BoxFit.cover),
-        Text(song.name),
-        Text(song.singer),
-        renderSongSlider(),
-        renderPlayingController(),
-      ],
+  Widget renderPlayingSong() {
+    // if (index == null) {
+    //   return Center(child: Text("Hãy chọn bài hát muốn phát"));
+    // }
+    return StreamBuilder<int?>(
+      stream: audioPlayer.currentIndexStream,
+      builder: (context, snap) {
+        final index = snap.data;
+
+        if (index == null || playingSongList.isEmpty) {
+          return Center(child: Text("Hãy chọn bài hát muốn phát"));
+        }
+        return Column(
+          children: [
+            Image.network(
+              playingSongList[index].image,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+            Text(playingSongList[index].name),
+            Text(playingSongList[index].singer),
+            renderSongSlider(),
+            renderPlayingController(),
+          ],
+        );
+      },
     );
   }
 
   Widget renderPlayingController() {
+    return Row(
+      children: [
+        isLoopOne
+            ? IconButton(
+                onPressed: () async {
+                  await audioPlayer.setLoopMode(LoopMode.off);
+                  setState(() {
+                    isLoopOne = false;
+                  });
+                },
+                icon: Icon(Icons.repeat_one_rounded, color: Color(0xFF5D4DCB)),
+              )
+            : IconButton(
+                onPressed: () async {
+                  await audioPlayer.setLoopMode(LoopMode.one);
+                  setState(() {
+                    isLoopOne = true;
+                  });
+                },
+                icon: Icon(Icons.repeat_one_rounded),
+              ),
+        StreamBuilder<SequenceState?>(
+          stream: audioPlayer.sequenceStateStream,
+          builder: (context, snapshot) {
+            return IconButton(
+              onPressed: () async {
+                if (audioPlayer.hasPrevious) {
+                  audioPlayer.seekToPrevious();
+                  audioPlayer.play();
+                } else {
+                  await playSpecificSong(0);
+                }
+              },
+              icon: Icon(Icons.skip_previous_rounded),
+            );
+          },
+        ),
+        renderPlayingButton(),
+        StreamBuilder<SequenceState?>(
+          stream: audioPlayer.sequenceStateStream,
+          builder: (context, snapshot) {
+            return IconButton(
+              onPressed: () {
+                if (audioPlayer.hasNext) {
+                  audioPlayer.seekToNext();
+                  audioPlayer.play();
+                }
+              },
+              icon: Icon(Icons.skip_next_rounded),
+            );
+          },
+        ),
+        IconButton(
+          onPressed: () async {
+            Random random = Random();
+            await audioPlayer.seek(
+              Duration.zero,
+              index: random.nextInt(playingSongList.length),
+            );
+            audioPlayer.play();
+          },
+          icon: Icon(CupertinoIcons.shuffle),
+        ),
+      ],
+    );
+  }
+
+  Widget renderPlayingButton() {
     return StreamBuilder<PlayerState>(
       stream: audioPlayer.playerStateStream,
       builder: (context, snap) {
@@ -115,43 +261,28 @@ class _SongPlayerState extends State<SongPlayer> {
         final positionData = snapshot.data;
         final position = positionData?.position ?? Duration.zero;
         final duration = positionData?.duration ?? Duration.zero;
+        final buffered = positionData?.bufferedPosition ?? Duration.zero;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              Slider(
-                min: 0.0,
-                max: duration.inSeconds.toDouble(),
-                value:
-                    _dragValue ??
-                    position.inSeconds.toDouble().clamp(
-                      0,
-                      duration.inSeconds.toDouble(),
-                    ),
-                onChanged: (value) {
-                  setState(() {
-                    _dragValue = value;
-                  });
-                },
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ProgressBar(
+            progress: position,
+            buffered: buffered,
+            total: duration,
 
-                onChangeEnd: (value) {
-                  audioPlayer.pause();
-                  audioPlayer.seek(Duration(seconds: value.toInt()));
-                  audioPlayer.play();
-                  setState(() {
-                    _dragValue = null;
-                  });
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_formatDuration(position)),
-                  Text(_formatDuration(duration)),
-                ],
-              ),
-            ],
+            onSeek: (duration) {
+              audioPlayer.pause();
+              audioPlayer.seek(duration);
+              audioPlayer.play();
+            },
+
+            progressBarColor: Colors.red,
+            baseBarColor: Colors.grey.withOpacity(0.24),
+            bufferedBarColor: Colors.grey.withOpacity(0.24),
+            thumbColor: Colors.red,
+            barHeight: 5.0,
+            thumbRadius: 8.0,
+            timeLabelLocation: TimeLabelLocation.below,
           ),
         );
       },
@@ -169,7 +300,16 @@ class _SongPlayerState extends State<SongPlayer> {
           if (snap.data == null) {
             return Center(child: Text("Lấy dữ liệu thất bại"));
           }
-          return renderSongs(snap.data!);
+          if (audioPlayer.sequence.isEmpty) {
+            playingSongList = snap.data!;
+            List<AudioSource> audioSources = playingSongList
+                .map(
+                  (song) => AudioSource.uri(Uri.parse(song.source), tag: song),
+                )
+                .toList();
+            audioPlayer.addAudioSources(audioSources);
+          }
+          return renderSongs(playingSongList);
         }
         return Center(child: CircularProgressIndicator());
       },
@@ -181,7 +321,7 @@ class _SongPlayerState extends State<SongPlayer> {
       padding: const EdgeInsets.all(10),
       itemCount: songs.length,
       itemBuilder: (context, index) {
-        return renderSong(songs[index]);
+        return renderSong(index);
       },
       separatorBuilder: (context, index) {
         return SizedBox(height: 10);
@@ -189,11 +329,16 @@ class _SongPlayerState extends State<SongPlayer> {
     );
   }
 
-  Future<void> playSpecificSong(String url) async {
+  Future<void> playSpecificSong(int index) async {
+    // setState(() {
+    //   playingSongIndex = index;
+    //   // playingSong = playingSongList[index];
+    // });
     try {
-      await audioPlayer.stop();
+      // await audioPlayer.stop();
 
-      await audioPlayer.setUrl(url);
+      await audioPlayer.seek(Duration.zero, index: index);
+      // await audioPlayer.setUrl(url);
 
       audioPlayer.play();
     } catch (e) {
@@ -201,13 +346,14 @@ class _SongPlayerState extends State<SongPlayer> {
     }
   }
 
-  Widget renderSong(Song song) {
+  Widget renderSong(int index) {
     return InkWell(
       onTap: () async {
-        setState(() {
-          playingSong = song;
-        });
-        await playSpecificSong(song.source);
+        // setState(() {
+        //   playingSongIndex = index;
+        //   // playingSong = playingSongList[index];
+        // });
+        await playSpecificSong(index);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -224,7 +370,7 @@ class _SongPlayerState extends State<SongPlayer> {
                 bottomLeft: Radius.circular(4),
               ),
               child: Image.network(
-                song.image,
+                playingSongList[index].image,
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -237,7 +383,7 @@ class _SongPlayerState extends State<SongPlayer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      song.name,
+                      playingSongList[index].name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -248,7 +394,7 @@ class _SongPlayerState extends State<SongPlayer> {
                     Text(
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      song.singer,
+                      playingSongList[index].singer,
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
@@ -260,11 +406,4 @@ class _SongPlayerState extends State<SongPlayer> {
       ),
     );
   }
-}
-
-String _formatDuration(Duration duration) {
-  String twoDigits(int n) => n.toString().padLeft(2, "0");
-  final minutes = twoDigits(duration.inMinutes.remainder(60));
-  final seconds = twoDigits(duration.inSeconds.remainder(60));
-  return "$minutes:$seconds";
 }
