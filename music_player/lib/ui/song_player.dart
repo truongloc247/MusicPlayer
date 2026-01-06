@@ -187,6 +187,7 @@ class _SongPlayerState extends State<SongPlayer> {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Container(
+        height: 75,
         decoration: BoxDecoration(
           color: Color(0xFFEDEBF9),
           borderRadius: BorderRadius.circular(7),
