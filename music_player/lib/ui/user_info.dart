@@ -166,6 +166,8 @@ class _UserInfoState extends State<UserInfo> {
           ],
         ),
         SizedBox(height: 50),
+        Text('Mã số tài khoản: ${user.id}'),
+        Divider(color: Color(0xFFEDEBF9)),
         Text('Số điện thoại: ${user.phoneNumber}'),
         Divider(color: Color(0xFFEDEBF9)),
         Text('Địa chỉ: ${user.address}'),
